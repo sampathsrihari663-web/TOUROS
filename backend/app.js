@@ -1,3 +1,12 @@
+// Ensure webcrypto / crypto is available on global scope
+const nodeCrypto = require('crypto');
+if (typeof globalThis.crypto === 'undefined') {
+  globalThis.crypto = nodeCrypto.webcrypto || nodeCrypto;
+}
+if (typeof global.crypto === 'undefined') {
+  global.crypto = globalThis.crypto;
+}
+
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
