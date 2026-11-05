@@ -32,7 +32,7 @@ export const Header = ({ onOpenSidebar, onOpenAddTaskModal }) => {
           <div className="hidden sm:block">
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                Touros Cloud Command
+                Touros
                 <Cloud size={20} className="text-sky-400 fill-sky-200 animate-cloud-pulse" />
               </h1>
             </div>
