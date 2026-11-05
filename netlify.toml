@@ -1,12 +1,14 @@
 [build]
-  # Install backend deps first (needed for serverless function bundling),
-  # then build the frontend React app.
-  command = "cd backend && npm install && cd ../frontend && npm install && npm run build"
+  command = "npm install && cd frontend && npm install && npm run build"
   publish = "frontend/dist"
   functions = "netlify/functions"
 
 [build.environment]
   NODE_VERSION = "18"
+
+[functions]
+  directory = "netlify/functions"
+  included_files = ["backend/**"]
 
 # Redirect all /api/* calls to the serverless function
 [[redirects]]

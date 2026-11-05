@@ -9,3 +9,4 @@ if (process.env.NODE_ENV !== 'production') {
 const app = require('../../backend/app');
 
 module.exports.handler = serverless(app);
+

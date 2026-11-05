@@ -1,12 +1,13 @@
 const express = require('express');
 const cors = require('cors');
+const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 const taskRoutes = require('./routes/taskRoutes');
 
-const app = express();
+// Load env vars if available locally
+dotenv.config();
 
-// Connect to MongoDB (cached for serverless reuse)
-connectDB();
+const app = express();
 
 // Middlewares
 app.use(cors({
@@ -17,14 +18,31 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Simple request logger
+// Request logger
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
 });
 
+// Database connection middleware for serverless execution
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('[Database Middleware Error]:', err.message);
+    res.status(500).json({
+      success: false,
+      message: 'Database connection failed: ' + err.message
+    });
+  }
+});
+
+// API Router
+const apiRouter = express.Router();
+
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+apiRouter.get('/health', (req, res) => {
   res.status(200).json({
     status: 'online',
     app: 'TOUROS API',
@@ -34,12 +52,17 @@ app.get('/api/health', (req, res) => {
 });
 
 // Task API Routes
-app.use('/api/tasks', taskRoutes);
+apiRouter.use('/tasks', taskRoutes);
 
 // Root route
-app.get('/', (req, res) => {
+apiRouter.get('/', (req, res) => {
   res.send('TOUROS Smart To-Do API is running...');
 });
+
+// Mount on all prefixes to ensure Netlify rewrites and direct calls always match
+app.use('/.netlify/functions/api', apiRouter);
+app.use('/api', apiRouter);
+app.use('/', apiRouter);
 
 // 404 Handler
 app.use((req, res, next) => {
