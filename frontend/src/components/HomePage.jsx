@@ -1,26 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { 
   Zap, 
   ArrowRight, 
   Plus, 
   Cloud, 
-  Compass,
-  Layers,
-  Volume2,
-  VolumeX,
-  Sparkles,
-  Flame,
-  Shield,
-  Heart,
-  Wind,
-  CheckCircle2,
-  Activity
+  Compass, 
+  Layers, 
+  Volume2, 
+  VolumeX, 
+  Flame, 
+  Wind, 
+  CheckCircle2 
 } from 'lucide-react';
 import Logo from './Logo';
 import taurosOfficial from '../assets/tauros-official.png';
 import taurosAnimated from '../assets/tauros-animated.gif';
-import ChibiTaurosFace from './ChibiTaurosFace';
-import soundService from '../services/soundService';
 
 export const HomePage = ({
   onGoToTasks,
@@ -29,18 +23,6 @@ export const HomePage = ({
   isSoundMuted,
   onToggleSound
 }) => {
-  // Interactive Mood Preview State on Hero Page
-  const [interactiveMood, setInteractiveMood] = useState(50);
-
-  const handleTestMood = (percent) => {
-    setInteractiveMood(percent);
-    if (percent === 100) {
-      soundService.playVictoryFanfare();
-    } else {
-      soundService.playSuccessChime();
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col justify-between animate-fade-in text-center selection:bg-sky-400 selection:text-white pb-16">
       
@@ -151,27 +133,11 @@ export const HomePage = ({
                 <span>Quick Add</span>
               </button>
             </div>
-
-            {/* Quick Metrics Ticker */}
-            <div className="pt-3 flex flex-wrap items-center gap-5 text-xs font-semibold text-slate-500">
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 size={15} className="text-emerald-500" />
-                <span>MongoDB Atlas Cloud</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Zap size={15} className="text-amber-500 fill-amber-500" />
-                <span>240 FPS Hardware Smooth</span>
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Volume2 size={15} className="text-sky-500" />
-                <span>Procedural Audio FX</span>
-              </span>
-            </div>
           </div>
 
-          {/* Right Column: Holographic Airborne Tauros Floating Showcase */}
+          {/* Right Column: Airborne Tauros Floating Showcase */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="relative w-full max-w-md p-7 rounded-3xl bg-white/80 backdrop-blur-2xl border border-white shadow-2xl hover:shadow-[0_20px_50px_rgba(56,189,248,0.25)] transition-all duration-500 group">
+            <div className="relative w-full max-w-md p-7 rounded-3xl bg-white/80 backdrop-blur-2xl border border-white/90 shadow-2xl hover:shadow-[0_20px_50px_rgba(56,189,248,0.22)] transition-all duration-500 group">
               
               {/* Floating Ambient Aura */}
               <div className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-sky-300/30 blur-3xl pointer-events-none" />
@@ -193,11 +159,11 @@ export const HomePage = ({
               </div>
 
               {/* Tauros Animated Visual with Clouds */}
-              <div className="relative my-4 flex items-center justify-center h-44 rounded-2xl bg-gradient-to-b from-sky-100/60 via-cloud-100/40 to-white/90 border border-sky-100 p-4 overflow-hidden">
+              <div className="relative my-3 flex items-center justify-center h-48 rounded-2xl bg-gradient-to-b from-sky-100/60 via-cloud-100/40 to-white/90 border border-sky-100 p-5 overflow-hidden">
                 <img
                   src={taurosAnimated}
                   alt="Pokémon Tauros Galloping in the clouds"
-                  className="w-28 h-28 object-contain drop-shadow-xl animate-cloud-bob relative z-10 transition-transform duration-300 group-hover:scale-110"
+                  className="w-32 h-32 object-contain drop-shadow-xl animate-cloud-bob relative z-10 transition-transform duration-300 group-hover:scale-110"
                 />
                 {/* Floating Clouds Background Elements */}
                 <div className="absolute top-3 left-4 text-sky-200/60 animate-drift-cloud-1 pointer-events-none">
@@ -208,60 +174,20 @@ export const HomePage = ({
                 </div>
               </div>
 
-              {/* Interactive Mood Face Preview */}
-              <div className="mt-4 pt-4 border-t border-slate-100 space-y-3 z-10 relative">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-extrabold text-slate-400 uppercase tracking-wider">
-                    Interactive Mood Engine
-                  </span>
-                  <span className="text-xs font-black text-sky-600">
-                    {interactiveMood}% Altitude
-                  </span>
+              {/* Clean Footer Description */}
+              <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between text-left z-10 relative">
+                <div>
+                  <h3 className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+                    <Zap size={14} className="text-amber-500 fill-amber-500" />
+                    <span>Wild Bull Momentum</span>
+                  </h3>
+                  <p className="text-[11px] text-slate-500 mt-0.5 font-medium">
+                    Charging through procrastination with airborne calm.
+                  </p>
                 </div>
-
-                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100">
-                  <ChibiTaurosFace completionRate={interactiveMood} size="md" />
-                  <div className="text-left flex-1 min-w-0">
-                    <p className="text-xs font-black text-slate-800">
-                      {interactiveMood === 100
-                        ? 'Crown: Sky Legend 👑'
-                        : interactiveMood >= 85
-                        ? 'Hyped: Jetstream Rush 🔥'
-                        : interactiveMood >= 50
-                        ? 'Happy: Stratosphere 🌤️'
-                        : interactiveMood >= 25
-                        ? 'Focused: Headwind ⚡'
-                        : 'Sleepy: Peaceful Meadow 💤'}
-                    </p>
-                    <p className="text-[10px] text-slate-500">
-                      Tap a mood below to test procedural chimes:
-                    </p>
-                  </div>
-                </div>
-
-                {/* Mood Clicker Chips */}
-                <div className="flex items-center justify-between gap-1 pt-1">
-                  {[
-                    { label: '0%', val: 0, emoji: '💤' },
-                    { label: '25%', val: 25, emoji: '⚡' },
-                    { label: '50%', val: 50, emoji: '🌤️' },
-                    { label: '85%', val: 85, emoji: '🔥' },
-                    { label: '100%', val: 100, emoji: '👑' },
-                  ].map((m) => (
-                    <button
-                      key={m.val}
-                      onClick={() => handleTestMood(m.val)}
-                      className={`px-2 py-1 rounded-xl text-[10px] font-black transition-all active:scale-95 flex items-center gap-1 ${
-                        interactiveMood === m.val
-                          ? 'bg-sky-500 text-white shadow-xs scale-105'
-                          : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200/80'
-                      }`}
-                    >
-                      <span>{m.emoji}</span>
-                      <span>{m.label}</span>
-                    </button>
-                  ))}
-                </div>
+                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-xl bg-sky-100 text-sky-700">
+                  Active
+                </span>
               </div>
 
             </div>
