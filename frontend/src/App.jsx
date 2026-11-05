@@ -19,6 +19,7 @@ import EmptyState from './components/EmptyState';
 import Toast from './components/Toast';
 import CloudBackground from './components/CloudBackground';
 import StampedeModal from './components/StampedeModal';
+import HomePage from './components/HomePage';
 import soundService from './services/soundService';
 
 export function App() {
@@ -27,8 +28,8 @@ export function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter & Search State
-  const [activeFilter, setActiveFilter] = useState('all');
+  // Filter & Search State (default to 'home' landing overview)
+  const [activeFilter, setActiveFilter] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('newest');
 
@@ -293,6 +294,7 @@ export function App() {
         stats={stats}
         isOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        onOpenStampede={() => setIsStampedeOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -328,80 +330,94 @@ export function App() {
             </div>
           )}
 
-          {/* Key Metrics Counters & Completion Progress Bar */}
-          <StatsCards
-            stats={stats}
-            onSelectFilter={(filterId) => setActiveFilter(filterId)}
-          />
-
-          {/* Search & Filter Controls */}
-          <FilterBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            selectedFilter={activeFilter}
-            setSelectedFilter={setActiveFilter}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            taskCounts={taskCounts}
-          />
-
-          {/* Task Cards Section Header */}
-          <div className="flex items-center justify-between pt-2">
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <span>Cloud Stream Roster</span>
-                <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200/80 shadow-xs">
-                  {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'}
-                </span>
-              </h2>
-              <p className="text-xs text-slate-500">
-                {activeFilter === 'all'
-                  ? 'All airborne objectives in flight'
-                  : `Filtered by ${activeFilter}`}
-              </p>
-            </div>
-
-            {/* Quick Add Button on right */}
-            <button
-              onClick={handleOpenAddTask}
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-sky-700 hover:text-sky-900 bg-white/80 hover:bg-white px-3.5 py-2 rounded-2xl border border-cloud-200/90 shadow-xs transition-all active:scale-[0.98]"
-            >
-              <Plus size={14} className="stroke-[2.5]" />
-              <span>New Task</span>
-            </button>
-          </div>
-
-          {/* Task Cards Grid or Loading/Empty State */}
-          {isLoading ? (
-            <div className="py-20 flex flex-col items-center justify-center gap-3">
-              <Loader2 size={36} className="text-sky-500 animate-spin" />
-              <p className="text-xs font-bold text-slate-500 tracking-wider uppercase flex items-center gap-1">
-                <span>Connecting to cloud stream...</span>
-                <Cloud size={14} className="text-sky-400" />
-              </p>
-            </div>
-          ) : filteredTasks.length === 0 ? (
-            <EmptyState
-              filterType={activeFilter}
-              searchQuery={searchQuery}
-              onResetFilters={() => {
-                setActiveFilter('all');
-                setSearchQuery('');
-              }}
-              onAddTask={handleOpenAddTask}
+          {/* Conditional View: Home Overview vs Task Stream */}
+          {activeFilter === 'home' ? (
+            <HomePage
+              stats={stats}
+              tasks={tasks}
+              onGoToTasks={() => setActiveFilter('all')}
+              onOpenAddTask={handleOpenAddTask}
+              onOpenStampede={() => setIsStampedeOpen(true)}
+              onToggleTaskStatus={handleToggleStatus}
             />
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
-              {filteredTasks.map((task) => (
-                <TaskCard
-                  key={task._id}
-                  task={task}
-                  onToggleStatus={handleToggleStatus}
-                  onEdit={handleOpenEditTask}
-                  onDelete={handlePromptDelete}
+            <>
+              {/* Key Metrics Counters & Completion Progress Bar */}
+              <StatsCards
+                stats={stats}
+                onSelectFilter={(filterId) => setActiveFilter(filterId)}
+              />
+
+              {/* Search & Filter Controls */}
+              <FilterBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                selectedFilter={activeFilter}
+                setSelectedFilter={setActiveFilter}
+                sortBy={sortBy}
+                setSortBy={setSortBy}
+                taskCounts={taskCounts}
+              />
+
+              {/* Task Cards Section Header */}
+              <div className="flex items-center justify-between pt-2">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                    <span>Cloud Stream Roster</span>
+                    <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-100 text-sky-800 border border-sky-200/80 shadow-xs">
+                      {filteredTasks.length} {filteredTasks.length === 1 ? 'task' : 'tasks'}
+                    </span>
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    {activeFilter === 'all'
+                      ? 'All airborne objectives in flight'
+                      : `Filtered by ${activeFilter}`}
+                  </p>
+                </div>
+
+                {/* Quick Add Button on right */}
+                <button
+                  onClick={handleOpenAddTask}
+                  className="hidden sm:inline-flex items-center gap-1.5 text-xs font-bold text-sky-700 hover:text-sky-900 bg-white/80 hover:bg-white px-3.5 py-2 rounded-2xl border border-cloud-200/90 shadow-xs transition-all active:scale-[0.98]"
+                >
+                  <Plus size={14} className="stroke-[2.5]" />
+                  <span>New Task</span>
+                </button>
+              </div>
+
+              {/* Task Cards Grid or Loading/Empty State */}
+              {isLoading ? (
+                <div className="py-20 flex flex-col items-center justify-center gap-3">
+                  <Loader2 size={36} className="text-sky-500 animate-spin" />
+                  <p className="text-xs font-bold text-slate-500 tracking-wider uppercase flex items-center gap-1">
+                    <span>Connecting to cloud stream...</span>
+                    <Cloud size={14} className="text-sky-400" />
+                  </p>
+                </div>
+              ) : filteredTasks.length === 0 ? (
+                <EmptyState
+                  filterType={activeFilter}
+                  searchQuery={searchQuery}
+                  onResetFilters={() => {
+                    setActiveFilter('all');
+                    setSearchQuery('');
+                  }}
+                  onAddTask={handleOpenAddTask}
                 />
-              ))}
-            </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5">
+                  {filteredTasks.map((task) => (
+                    <TaskCard
+                      key={task._id}
+                      task={task}
+                      onToggleStatus={handleToggleStatus}
+                      onEdit={handleOpenEditTask}
+                      onDelete={handlePromptDelete}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
