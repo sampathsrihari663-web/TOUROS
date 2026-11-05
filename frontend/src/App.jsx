@@ -287,32 +287,39 @@ export function App() {
       {/* Animated Clouds Backdrop ("clouds iykyk") */}
       <CloudBackground />
 
-      {/* Sidebar Navigation */}
-      <Sidebar
-        activeFilter={activeFilter}
-        setActiveFilter={setActiveFilter}
-        stats={stats}
-        isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
-        onOpenStampede={() => setIsStampedeOpen(true)}
-      />
+      {/* Sidebar Navigation — ONLY shown when on Task Stream */}
+      {activeFilter !== 'home' && (
+        <Sidebar
+          activeFilter={activeFilter}
+          setActiveFilter={setActiveFilter}
+          stats={stats}
+          isOpen={isSidebarOpen}
+          onClose={() => setIsSidebarOpen(false)}
+          onOpenStampede={() => setIsStampedeOpen(true)}
+        />
+      )}
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 relative z-10">
-        {/* Header */}
-        <Header
-          onOpenSidebar={() => setIsSidebarOpen(true)}
-          onOpenAddTaskModal={handleOpenAddTask}
-          onOpenStampedeModal={() => setIsStampedeOpen(true)}
-          isSoundMuted={isSoundMuted}
-          onToggleSound={handleToggleSound}
-        />
+        {/* Header — ONLY shown when on Task Stream */}
+        {activeFilter !== 'home' && (
+          <Header
+            onOpenSidebar={() => setIsSidebarOpen(true)}
+            onOpenAddTaskModal={handleOpenAddTask}
+            onOpenStampedeModal={() => setIsStampedeOpen(true)}
+            isSoundMuted={isSoundMuted}
+            onToggleSound={handleToggleSound}
+            onGoHome={() => setActiveFilter('home')}
+          />
+        )}
 
         {/* Dashboard Body */}
-        <main className="flex-1 p-4 sm:p-8 max-w-7xl mx-auto w-full space-y-6 sm:space-y-8">
+        <main className={`flex-1 w-full space-y-6 sm:space-y-8 ${
+          activeFilter === 'home' ? 'p-0 max-w-full' : 'p-4 sm:p-8 max-w-7xl mx-auto'
+        }`}>
           {/* Server / DB Error Alert */}
           {error && (
-            <div className="p-4 rounded-3xl bg-rose-50/90 backdrop-blur-xl border border-rose-200 text-rose-800 flex items-center justify-between gap-3 shadow-xs">
+            <div className="p-4 mx-4 sm:mx-8 max-w-7xl lg:mx-auto rounded-3xl bg-rose-50/90 backdrop-blur-xl border border-rose-200 text-rose-800 flex items-center justify-between gap-3 shadow-xs">
               <div className="flex items-center gap-3">
                 <AlertCircle size={20} className="text-rose-600 shrink-0" />
                 <div>
@@ -333,12 +340,11 @@ export function App() {
           {/* Conditional View: Home Overview vs Task Stream */}
           {activeFilter === 'home' ? (
             <HomePage
-              stats={stats}
-              tasks={tasks}
               onGoToTasks={() => setActiveFilter('all')}
               onOpenAddTask={handleOpenAddTask}
               onOpenStampede={() => setIsStampedeOpen(true)}
-              onToggleTaskStatus={handleToggleStatus}
+              isSoundMuted={isSoundMuted}
+              onToggleSound={handleToggleSound}
             />
           ) : (
             <>

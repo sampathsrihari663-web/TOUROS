@@ -1,5 +1,6 @@
 import React from 'react';
 import { 
+  Home,
   Menu, 
   Plus, 
   Calendar, 
@@ -15,7 +16,8 @@ export const Header = ({
   onOpenAddTaskModal, 
   onOpenStampedeModal,
   isSoundMuted,
-  onToggleSound
+  onToggleSound,
+  onGoHome
 }) => {
   // Format current date nicely
   const today = new Date();
@@ -38,11 +40,15 @@ export const Header = ({
             <Menu size={22} />
           </button>
 
-          <div className="lg:hidden">
+          <div className="lg:hidden cursor-pointer" onClick={onGoHome} title="Go to Home">
             <TaurosChibiIcon size={38} />
           </div>
 
-          <div className="hidden sm:block">
+          <div 
+            onClick={onGoHome} 
+            className="hidden sm:block cursor-pointer transition-transform hover:scale-[1.01]" 
+            title="Return to Home Overview"
+          >
             <div className="flex items-center gap-2">
               <h1 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
                 Touros
@@ -58,6 +64,16 @@ export const Header = ({
         {/* Right: Sound Toggle, Stampede Mode, Date & Add Task CTA */}
         <div className="flex items-center gap-2 sm:gap-3">
           
+          {/* Home Link */}
+          <button
+            onClick={onGoHome}
+            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-2xl bg-white/85 hover:bg-white text-slate-700 hover:text-sky-700 border border-cloud-200/90 text-xs font-bold transition-all active:scale-95 shadow-xs"
+            title="Return to Home Overview"
+          >
+            <Home size={14} className="text-sky-600" />
+            <span>Home</span>
+          </button>
+
           {/* Audio FX Toggle Button */}
           <button
             onClick={onToggleSound}
