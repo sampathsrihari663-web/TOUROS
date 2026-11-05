@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// In production on Netlify, /api/* is redirected to the serverless function
+// on the same domain — no CORS issues, no separate backend URL needed.
+// In local dev, Vite proxy handles /api → localhost:5001.
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -22,4 +25,3 @@ api.interceptors.response.use(
 );
 
 export default api;
-

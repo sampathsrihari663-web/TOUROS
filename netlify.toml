@@ -1,10 +1,21 @@
 [build]
-  base = "frontend"
-  publish = "dist"
-  command = "npm run build"
+  # Install backend deps first (needed for serverless function bundling),
+  # then build the frontend React app.
+  command = "cd backend && npm install && cd ../frontend && npm install && npm run build"
+  publish = "frontend/dist"
+  functions = "netlify/functions"
 
+[build.environment]
+  NODE_VERSION = "18"
+
+# Redirect all /api/* calls to the serverless function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# SPA fallback — React Router support
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
