@@ -1,0 +1,16 @@
+{
+  "name": "touros-project",
+  "version": "1.0.0",
+  "description": "TOUROS — Smart To-Do List (Full-Stack MERN Application)",
+  "scripts": {
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "start:backend": "cd backend && npm start",
+    "start:frontend": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
+  },
+  "keywords": ["mern", "mongodb", "express", "react", "vite", "touros", "productivity", "todo"],
+  "author": "TOUROS Engineering",
+  "license": "MIT"
+}
+
