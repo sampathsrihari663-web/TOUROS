@@ -1,19 +1,32 @@
 import React from 'react';
-import { Menu, Plus, Calendar, Cloud } from 'lucide-react';
-import { Logo, TaurosChibiIcon } from './Logo';
+import { 
+  Menu, 
+  Plus, 
+  Calendar, 
+  Cloud, 
+  Zap, 
+  Volume2, 
+  VolumeX 
+} from 'lucide-react';
+import { TaurosChibiIcon } from './Logo';
 
-export const Header = ({ onOpenSidebar, onOpenAddTaskModal }) => {
+export const Header = ({ 
+  onOpenSidebar, 
+  onOpenAddTaskModal, 
+  onOpenStampedeModal,
+  isSoundMuted,
+  onToggleSound
+}) => {
   // Format current date nicely
   const today = new Date();
   const formattedDate = today.toLocaleDateString('en-US', {
-    weekday: 'long',
+    weekday: 'short',
     month: 'short',
-    day: 'numeric',
-    year: 'numeric'
+    day: 'numeric'
   });
 
   return (
-    <header className="sticky top-0 z-30 bg-white/70 backdrop-blur-xl border-b border-cloud-200/80 py-4 px-4 sm:px-8 shadow-xs">
+    <header className="sticky top-0 z-30 bg-white/75 backdrop-blur-xl border-b border-cloud-200/80 py-3.5 px-4 sm:px-8 shadow-xs">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
         {/* Left: Mobile hamburger & Welcome */}
         <div className="flex items-center gap-3">
@@ -26,7 +39,7 @@ export const Header = ({ onOpenSidebar, onOpenAddTaskModal }) => {
           </button>
 
           <div className="lg:hidden">
-            <TaurosChibiIcon size={40} />
+            <TaurosChibiIcon size={38} />
           </div>
 
           <div className="hidden sm:block">
@@ -42,11 +55,39 @@ export const Header = ({ onOpenSidebar, onOpenAddTaskModal }) => {
           </div>
         </div>
 
-        {/* Right: Date & Add Task CTA */}
-        <div className="flex items-center gap-3 sm:gap-4">
+        {/* Right: Sound Toggle, Stampede Mode, Date & Add Task CTA */}
+        <div className="flex items-center gap-2 sm:gap-3">
+          
+          {/* Audio FX Toggle Button */}
+          <button
+            onClick={onToggleSound}
+            className={`p-2.5 rounded-2xl border transition-all active:scale-95 ${
+              isSoundMuted
+                ? 'bg-slate-100 border-slate-200 text-slate-400 hover:text-slate-600'
+                : 'bg-white/90 border-sky-200/90 text-sky-600 hover:bg-sky-50 shadow-xs'
+            }`}
+            title={isSoundMuted ? 'Unmute Sound Effects' : 'Mute Sound Effects'}
+            aria-label="Toggle Sound"
+          >
+            {isSoundMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+          </button>
+
+          {/* Stampede Mode Trigger Button */}
+          <button
+            onClick={onOpenStampedeModal}
+            className="group relative inline-flex items-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-2xl font-bold text-xs sm:text-sm text-slate-900 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-500 hover:from-amber-400 hover:to-amber-600 border border-amber-300/60 shadow-sm hover:shadow-md active:scale-95 transition-all"
+            title="Open Focus Sprint / Pomodoro Mode"
+          >
+            <Zap size={15} className="text-slate-950 fill-slate-950 transition-transform group-hover:scale-110" />
+            <span className="font-extrabold tracking-tight">Stampede</span>
+            <span className="hidden md:inline-block text-[10px] font-black uppercase tracking-wider bg-slate-950/15 px-1.5 py-0.5 rounded-md">
+              Focus
+            </span>
+          </button>
+
           {/* Current Date Badge */}
-          <div className="hidden md:flex items-center gap-2 px-3.5 py-2 bg-white/85 border border-cloud-200/90 rounded-2xl text-xs font-semibold text-slate-700 shadow-xs">
-            <Calendar size={14} className="text-sky-600" />
+          <div className="hidden lg:flex items-center gap-2 px-3 py-2 bg-white/85 border border-cloud-200/90 rounded-2xl text-xs font-semibold text-slate-700 shadow-xs">
+            <Calendar size={13} className="text-sky-600" />
             <span>{formattedDate}</span>
           </div>
 

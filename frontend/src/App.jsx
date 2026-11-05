@@ -18,6 +18,8 @@ import DeleteConfirmModal from './components/DeleteConfirmModal';
 import EmptyState from './components/EmptyState';
 import Toast from './components/Toast';
 import CloudBackground from './components/CloudBackground';
+import StampedeModal from './components/StampedeModal';
+import soundService from './services/soundService';
 
 export function App() {
   // Task State
@@ -34,6 +36,8 @@ export function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isStampedeOpen, setIsStampedeOpen] = useState(false);
+  const [isSoundMuted, setIsSoundMuted] = useState(soundService.isMuted());
 
   // Delete Confirmation State
   const [deletingTask, setDeletingTask] = useState(null);
@@ -174,6 +178,12 @@ export function App() {
     return result;
   }, [tasks, activeFilter, searchQuery, sortBy]);
 
+  // Audio Toggle
+  const handleToggleSound = () => {
+    const newSoundState = soundService.toggleSound();
+    setIsSoundMuted(!newSoundState);
+  };
+
   // Handler: Open Add Task Modal
   const handleOpenAddTask = () => {
     setEditingTask(null);
@@ -197,6 +207,7 @@ export function App() {
           setTasks((prev) =>
             prev.map((t) => (t._id === editingTask._id ? response.data : t))
           );
+          soundService.playPop();
           showToast('success', `Objective "${response.data.title}" updated in cloud!`);
         }
       } else {
@@ -204,6 +215,7 @@ export function App() {
         const response = await taskService.createTask(taskData);
         if (response && response.data) {
           setTasks((prev) => [response.data, ...prev]);
+          soundService.playPop();
           showToast('success', `Objective "${response.data.title}" launched to stream!`);
         }
       }
@@ -222,9 +234,17 @@ export function App() {
     try {
       const response = await taskService.updateTaskStatus(taskId, newStatus);
       if (response && response.data) {
-        setTasks((prev) =>
-          prev.map((t) => (t._id === taskId ? response.data : t))
-        );
+        setTasks((prev) => {
+          const updated = prev.map((t) => (t._id === taskId ? response.data : t));
+          // Check if all tasks are now completed
+          if (newStatus && updated.length > 0 && updated.every((t) => t.completed)) {
+            soundService.playVictoryFanfare();
+          } else if (newStatus) {
+            soundService.playSuccessChime();
+          }
+          return updated;
+        });
+
         showToast(
           'info',
           response.data.completed
@@ -250,6 +270,7 @@ export function App() {
     try {
       await taskService.deleteTask(deletingTask._id);
       setTasks((prev) => prev.filter((t) => t._id !== deletingTask._id));
+      soundService.playPop();
       showToast('info', `Objective "${deletingTask.title}" cleared from cloud.`);
       setDeletingTask(null);
     } catch (err) {
@@ -280,6 +301,9 @@ export function App() {
         <Header
           onOpenSidebar={() => setIsSidebarOpen(true)}
           onOpenAddTaskModal={handleOpenAddTask}
+          onOpenStampedeModal={() => setIsStampedeOpen(true)}
+          isSoundMuted={isSoundMuted}
+          onToggleSound={handleToggleSound}
         />
 
         {/* Dashboard Body */}
@@ -405,6 +429,14 @@ export function App() {
 
       {/* Toast Feedback */}
       <Toast toast={toast} onClose={() => setToast(null)} />
+
+      {/* Tauros Stampede Focus Pomodoro Modal */}
+      <StampedeModal
+        isOpen={isStampedeOpen}
+        onClose={() => setIsStampedeOpen(false)}
+        tasks={tasks}
+        onCompleteTask={handleToggleStatus}
+      />
     </div>
   );
 }
